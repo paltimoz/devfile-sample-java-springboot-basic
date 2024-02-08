@@ -12,17 +12,9 @@ spec:
       labels:
         app: java-springboot-app
     spec:
-      volumes:
-        - name: cert-volume
-          configMap:
-            name: sertifika
       containers:
         - name: my-java-springboot
           image: java-springboot-image:latest
-          volumeMounts:
-            - name: cert-volume
-              mountPath: "/etc/cert"
-              readOnly: true
           ports:
             - name: http
               containerPort: 8081
@@ -31,6 +23,21 @@ spec:
             requests:
               memory: "180Mi"
               cpu: "10m"
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - "/bin/sh"
+                  - "-c"
+                  - |
+                    echo "$CERTIFICATE_CONTENT" > /tmp/sertifika.cer
+                    keytool -import -alias your-alias -file /tmp/sertifika.cer -keystore /etc/pki/java/cacerts -storepass changeit -noprompt
+          env:
+            - name: CERTIFICATE_CONTENT
+              valueFrom:
+                configMapKeyRef:
+                  name: sertifika.cer
+                  key: sertifika.cer
 ---
 kind: Service
 apiVersion: v1
