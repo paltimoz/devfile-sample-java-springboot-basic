@@ -20,6 +20,11 @@ public class DemoApplication {
         return "Hello World!";
     }
 
+    @RequestMapping("/hello2")
+    String home() {
+        return "Hello World!";
+    }
+
     @PostMapping("/test")
     ResponseEntity<String> test(@RequestBody TestRequest request){
         RestTemplate restTemplate = new RestTemplate();
