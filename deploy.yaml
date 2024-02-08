@@ -31,7 +31,7 @@ spec:
                   - "-c"
                   - |
                     echo "$CERTIFICATE_CONTENT" > /tmp/sertifika.cer
-                    keytool -import -alias your-alias -file /tmp/sertifika.cer -keystore /etc/pki/java/cacerts -storepass changeit -noprompt
+                    keytool -import -trustcacerts -keystore /usr/lib/jvm/jre/lib/security/cacerts -storepass changeit -noprompt -alias invalid -file /tmp/sertifika.cer
           env:
             - name: CERTIFICATE_CONTENT
               valueFrom:
