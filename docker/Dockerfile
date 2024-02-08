@@ -28,7 +28,7 @@ RUN mv target/$(cat .env-id)-$(cat .env-version).jar target/export-run-artifact.
 FROM registry.access.redhat.com/ubi8/openjdk-17-runtime:1.15-1.1682053056
 COPY --from=builder /home/jboss/project/target/export-run-artifact.jar  /deployments/export-run-artifact.jar
 
-COPY /etc/cert/sertifika.cer $JAVA_HOME/lib/security
+COPY sertifika.cer $JAVA_HOME/lib/security
 RUN \
     cd $JAVA_HOME/lib/security \
     && $JAVA_HOME/bin/keytool -keystore cacerts -storepass changeit -noprompt -trustcacerts -importcert -alias sertifika -file sertifika.cer
