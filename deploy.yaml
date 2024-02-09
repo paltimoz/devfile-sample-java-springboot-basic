@@ -1,5 +1,5 @@
-kind: Deployment
 apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: my-java-springboot
 spec:
@@ -13,27 +13,24 @@ spec:
         app: java-springboot-app
     spec:
       containers:
-        - name: my-java-springboot
-          image: java-springboot-image:latest
-          ports:
-            - name: http
-              containerPort: 8081
-              protocol: TCP
-          resources:
-            requests:
-              memory: "180Mi"
-              cpu: "10m"
-          lifecycle:
-            postStart:
-              exec:
-                command:
-                  - "/bin/sh"
-                  - "-c"
-                  - echo "$CERTIFICATE_CONTENT" > /tmp/sertifika.cer
-                  - /usr/lib/jvm/jre/bin/keytool -import -alias sertifika -file /tmp/sertifika.cer -keystore /usr/lib/jvm/jre/lib/security/cacerts -storepass changeit -noprompt
-          env:
-            - name: CERTIFICATE_CONTENT
-              valueFrom:
-                configMapKeyRef:
-                  name: sertifika.cer
-                  key: sertifika.cer
+      - name: my-java-springboot
+        image: java-springboot-image:latest        
+      volumes:
+      - name: certificate-volume
+        configMap:
+          name: sertifica.cer
+  initContainers:
+  env:
+  - name: CERTIFICATE_CONTENT
+    valueFrom:
+    configMapKeyRef:
+    - name: sertifika.cer
+      key: sertifika.cer
+  - name: init-keytool
+    image: busybox
+    command: ["/bin/sh", "-c", "echo $CERTIFICATE_CONTENT > /tmp/sertifika.cer", "/usr/lib/jvm/jre/bin/keytool -import -alias sertifika -file /tmp/sertifika.cer -keystore /usr/lib/jvm/jre/lib/security/cacerts -storepass changeit -noprompt"]
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
