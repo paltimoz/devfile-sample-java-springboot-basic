@@ -1,33 +1,33 @@
 apiVersion: v1
 kind: Template
 metadata:
-  name: ${APP_NAME}
+  name: devfile-sample-java-springboot-basic-git-app
 objects:
   - apiVersion: apps/v1
     kind: Deployment
     metadata:
-      name: ${APP_NAME}
-      namespace: ${NAMESPACE}
+      name: devfile-sample-java-springboot-basic-git-app
+      namespace: devfile-sample-java-springboot-basic-git-app
       labels:
-        name: ${APP_NAME}
+        name: devfile-sample-java-springboot-basic-git-app
     spec:
       replicas: 1
       selector:
         matchLabels:
-          name: ${APP_NAME}
+          name: devfile-sample-java-springboot-basic-git-app
       template:
         metadata:
           creationTimestamp: null
           labels:
-            name: ${APP_NAME}
-            deployment: ${APP_NAME}
+            name: devfile-sample-java-springboot-basic-git-app
+            deployment: devfile-sample-java-springboot-basic-git-app
         spec:
           volumes:
             - name: cert-volume
               configMap:
                 name: sertifika.cer
           containers:
-              name: ${APP_NAME}
+              name: devfile-sample-java-springboot-basic-git-app
               image: java-springboot-image:latest
               volumeMounts:
                 - name: cert-volume
