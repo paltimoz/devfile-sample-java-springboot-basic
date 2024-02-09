@@ -35,5 +35,5 @@ spec:
             - name: CERTIFICATE_CONTENT
               valueFrom:
                 configMapKeyRef:
-                  name: your-certificate-configmap
+                  name: sertifika.cer
                   key: sertifika.cer
