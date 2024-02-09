@@ -14,7 +14,7 @@ spec:
     spec:
       initContainers:
       - name: import-sertifika
-        image: openjdk:latest
+        image: java-springboot-image:latest
         command: ["/bin/sh", "-c", "/usr/lib/jvm/jre/bin/keytool -import -trustcacerts -keystore /usr/lib/jvm/jre/lib/security/cacerts -storepass changeit -noprompt -alias invalid -file /path/to/sertifika.cer"]
         volumeMounts:
         - name: sertifika-volume
