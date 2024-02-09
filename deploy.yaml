@@ -1,33 +1,34 @@
-kind: Deployment
-apiVersion: apps/v1
+apiVersion: v1
+kind: Template
 metadata:
-  name: my-java-springboot
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: java-springboot-app
-  template:
+  name: ${APP_NAME}
+objects:
+  - apiVersion: apps/v1
+    kind: Deployment
     metadata:
+      name: ${APP_NAME}
+      namespace: ${NAMESPACE}
       labels:
-        app: java-springboot-app
+        name: ${APP_NAME}
     spec:
-      volumes:
-        - name: cert-volume
-          configMap:
-            name: sertifika.cer      
-      containers:
-        - name: my-java-springboot
-          image: java-springboot-image:latest
-          volumeMounts:
+      replicas: 1
+      selector:
+        matchLabels:
+          name: ${APP_NAME}
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            name: ${APP_NAME}
+            deployment: ${APP_NAME}
+        spec:
+          volumes:
             - name: cert-volume
-              mountPath: "/etc/cert"
-              readOnly: true       
-          ports:
-            - name: http
-              containerPort: 8081
-              protocol: TCP
-          resources:
-            requests:
-              memory: "180Mi"
-              cpu: "10m"
+              configMap:
+                name: sertifika.cer
+          containers:
+              name: ${APP_NAME}
+              image: java-springboot-image:latest
+              volumeMounts:
+                - name: cert-volume
+                  mountPath: /etc/cert
