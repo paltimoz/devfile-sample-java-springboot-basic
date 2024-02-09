@@ -1,5 +1,5 @@
-apiVersion: apps/v1
 kind: Deployment
+apiVersion: apps/v1
 metadata:
   name: my-java-springboot
 spec:
@@ -12,29 +12,28 @@ spec:
       labels:
         app: java-springboot-app
     spec:
-      initContainers:
-        - name: prepare-truststore
-          image: 'java-springboot-image:latest'
-          command:
-            - /bin/sh
-            - '-c'
-          args:
-            - >-
-              echo "$CERTIFICATE_CONTENT" > /tmp/sertifika.cer && keytool -import -trustcacerts -keystore /usr/lib/jvm/jre/lib/security/cacerts -storepass changeit -noprompt -alias sertifika -file /tmp/sertifika.cer
       containers:
         - name: my-java-springboot
-          image: 'java-springboot-image:latest'
+          image: java-springboot-image:latest
           ports:
             - name: http
               containerPort: 8081
               protocol: TCP
           resources:
             requests:
-              memory: 180Mi
-              cpu: 10m
+              memory: "180Mi"
+              cpu: "10m"
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - "/bin/sh"
+                  - "-c"
+                  - echo "$CERTIFICATE_CONTENT" > /tmp/sertifika.cer
+                  - /usr/lib/jvm/jre/bin/keytool -import -alias sertifika -file /tmp/sertifika.cer -keystore /usr/lib/jvm/jre/lib/security/cacerts -storepass changeit -noprompt
           env:
             - name: CERTIFICATE_CONTENT
               valueFrom:
                 configMapKeyRef:
-                  name: sertifika.cer
+                  name: your-certificate-configmap
                   key: sertifika.cer
